@@ -1,6 +1,6 @@
-package com.messaging_app.backend.User;
+package com.messaging.app.backend.User;
 
-import java.time.LocalDate;
+import java.time.Instant;
 import java.util.List;
 
 public record UserResponseDto(
@@ -9,6 +9,5 @@ public record UserResponseDto(
     String lastName,
     String username,
     List<String> topInterests,
-    LocalDate dateJoined) {
-
+    Instant dateJoined) {
 }

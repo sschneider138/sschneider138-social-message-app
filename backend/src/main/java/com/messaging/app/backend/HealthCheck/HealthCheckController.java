@@ -1,4 +1,4 @@
-package com.messaging_app.backend.HealthCheck;
+package com.messaging.app.backend.HealthCheck;
 
 import java.util.HashMap;
 import java.util.Map;

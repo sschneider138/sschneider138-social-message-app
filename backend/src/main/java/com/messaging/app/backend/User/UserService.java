@@ -1,4 +1,4 @@
-package com.messaging_app.backend.User;
+package com.messaging.app.backend.User;
 
 import java.util.List;
 import java.util.Optional;
@@ -6,7 +6,9 @@ import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.stereotype.Service;
 
+@Service
 public class UserService {
   private final UserRepository userRepository;
 
@@ -39,7 +41,7 @@ public class UserService {
   }
 
   public Optional<UserResponseDto> getByUsername(String username) {
-    return userRepository.findBy(username);
+    return userRepository.findByUsername(username);
   }
 
   public User createUser(UserCreateDto userCreateDto) {

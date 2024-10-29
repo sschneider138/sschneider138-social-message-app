@@ -1,4 +1,4 @@
-package com.messaging_app.backend.User;
+package com.messaging.app.backend.User;
 
 import java.util.List;
 
