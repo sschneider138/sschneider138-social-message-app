@@ -1,7 +1,9 @@
 package com.messaging.app.backend.User;
 
 import java.net.URI;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,6 +25,13 @@ public class UserController {
 
   public UserController(UserService userService) {
     this.userService = userService;
+  }
+
+  @GetMapping("test")
+  public Map<String, String> test() {
+    var status = new HashMap<String, String>();
+    status.put("hi", "there");
+    return status;
   }
 
   @GetMapping("all")
@@ -49,6 +58,7 @@ public class UserController {
         .path("/{id}")
         .buildAndExpand(savedUser.getId())
         .toUri();
+    System.out.println("user created");
     return ResponseEntity.created(location).body(responseDto);
   }
 

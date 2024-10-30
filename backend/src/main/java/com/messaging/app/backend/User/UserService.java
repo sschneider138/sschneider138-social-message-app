@@ -45,10 +45,12 @@ public class UserService {
   }
 
   public User createUser(UserCreateDto userCreateDto) {
+    System.out.println("starting user service");
     try {
       User user = User.builder()
           .firstName(userCreateDto.firstName())
           .lastName(userCreateDto.lastName())
+          .username(userCreateDto.username())
           .email(userCreateDto.email())
           .phoneNumber(userCreateDto.phoneNumber())
           .topInterests(userCreateDto.topInterests())
