@@ -8,6 +8,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import com.messaging.app.backend.exceptions.UserNotCreatedException;
+import com.messaging.app.backend.exceptions.UserNotFoundException;
+import com.messaging.app.backend.exceptions.UserNotUpdatedException;
+
 @Service
 public class UserService {
   private final UserRepository userRepository;
@@ -16,8 +20,8 @@ public class UserService {
     this.userRepository = userRepository;
   }
 
-  public List<UserResponseDto> getAllUsers() {
-    return userRepository.findAll().stream()
+  public List<UserResponseDto> getAllUsers() throws UserNotFoundException {
+    List<UserResponseDto> users = userRepository.findAll().stream()
         .map(
             user -> new UserResponseDto(
                 user.getFirstName(),
@@ -26,9 +30,15 @@ public class UserService {
                 user.getTopInterests(),
                 user.getDateJoined()))
         .collect(Collectors.toList());
+
+    if (users.isEmpty()) {
+      throw new UserNotFoundException("users not found");
+    }
+
+    return users;
   }
 
-  public UserPageDto getAllPaginatedUsers(int pageIndex, int itemsPerPage) {
+  public UserPageDto getAllPaginatedUsers(int pageIndex, int itemsPerPage) throws UserNotFoundException {
     PageRequest pageRequest = PageRequest.of(pageIndex, itemsPerPage);
     Page<UserResponseDto> page = userRepository.findAllBy(pageRequest);
 
@@ -36,7 +46,7 @@ public class UserService {
         page.getSize());
   }
 
-  public Optional<User> getById(Long id) {
+  public Optional<User> getById(Long id) throws UserNotFoundException {
     return userRepository.findById(id);
   }
 
@@ -44,8 +54,7 @@ public class UserService {
     return userRepository.findByUsername(username);
   }
 
-  public User createUser(UserCreateDto userCreateDto) {
-    System.out.println("starting user service");
+  public User createUser(UserCreateDto userCreateDto) throws UserNotCreatedException {
     try {
       User user = User.builder()
           .firstName(userCreateDto.firstName())
@@ -57,7 +66,41 @@ public class UserService {
           .build();
       return userRepository.save(user);
     } catch (Exception e) {
-      throw new RuntimeException("failed to create user: " + e.getMessage());
+      throw new UserNotCreatedException("failed to create user " + e.getMessage());
     }
+  }
+
+  public User partialUpdateUser(Long id, UserUpdateDto userUpdateDto) throws UserNotUpdatedException {
+    User user = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException("user not found"));
+    try {
+
+      if (userUpdateDto.firstName() != null) {
+        user.setFirstName(userUpdateDto.firstName());
+      }
+
+      if (userUpdateDto.lastName() != null) {
+        user.setLastName(userUpdateDto.lastName());
+      }
+
+      if (userUpdateDto.username() != null) {
+        user.setUsername(userUpdateDto.username());
+      }
+
+      if (userUpdateDto.email() != null) {
+        user.setEmail(userUpdateDto.email());
+
+      }
+      if (userUpdateDto.phoneNumber() != null) {
+        user.setPhoneNumber(userUpdateDto.phoneNumber());
+      }
+
+      if (userUpdateDto.topInterests() != null) {
+        user.setTopInterests(userUpdateDto.topInterests());
+      }
+      return userRepository.save(user);
+    } catch (UserNotUpdatedException e) {
+      throw new UserNotUpdatedException("user found, but not updated: " + e.getMessage());
+    }
+
   }
 }
