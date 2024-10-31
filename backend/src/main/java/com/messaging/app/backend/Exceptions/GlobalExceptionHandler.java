@@ -1,4 +1,4 @@
-package com.messaging.app.backend.exceptions;
+package com.messaging.app.backend.Exceptions;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
