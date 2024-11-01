@@ -1,6 +1,7 @@
 package com.messaging.app.backend.User;
 
-import com.messaging.app.backend.Pagination.UserPaginationRequestDto;
+import com.messaging.app.backend.Pagination.PageDto;
+import com.messaging.app.backend.Pagination.PaginationRequestDto;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,22 +21,22 @@ public class UserController {
 
     @GetMapping("all")
     public ResponseEntity<List<UserResponseDto>> getAllUsers() {
-        var allUsers = userService.getAllUsers();
+        List<UserResponseDto> allUsers = userService.getAllUsers();
         return ResponseEntity.ok(allUsers);
     }
 
     @GetMapping("/all/paginated")
-    public ResponseEntity<UserPageDto> getAllPaginatedUsers(
-            @RequestBody UserPaginationRequestDto userPaginationRequestDto) {
-        var currentPage = Math.max(userPaginationRequestDto.pageIndex(), 0);
-        var currentLimit = (userPaginationRequestDto.itemsPerPage() > 0) ? userPaginationRequestDto.itemsPerPage() : 10;
-        var userPageDto = userService.getAllPaginatedUsers(currentPage, currentLimit);
-        return ResponseEntity.ok(userPageDto);
+    public ResponseEntity<PageDto<UserResponseDto>> getAllPaginatedUsers(
+            @RequestBody PaginationRequestDto paginationRequestDto) {
+        int currentPage = Math.max(paginationRequestDto.pageIndex(), 0);
+        int currentLimit = (paginationRequestDto.itemsPerPage() > 0) ? paginationRequestDto.itemsPerPage() : 10;
+        PageDto<UserResponseDto> pageDto = userService.getAllPaginatedUsers(currentPage, currentLimit);
+        return ResponseEntity.ok(pageDto);
     }
 
     @PostMapping("/new")
-    public ResponseEntity<UserResponseDto> createUser(@Valid @RequestBody UserCreateDto userCreateDto) {
-        UserResponseDto savedUser = userService.createUser(userCreateDto);
+    public ResponseEntity<UserResponseDto> createUser(@Valid @RequestBody UserCreationDto userCreationDto) {
+        UserResponseDto savedUser = userService.createUser(userCreationDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(savedUser);
     }
 

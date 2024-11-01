@@ -3,6 +3,7 @@ package com.messaging.app.backend.User;
 import com.messaging.app.backend.Exceptions.UserNotCreatedException;
 import com.messaging.app.backend.Exceptions.UserNotFoundException;
 import com.messaging.app.backend.Exceptions.UserNotUpdatedException;
+import com.messaging.app.backend.Pagination.PageDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -32,7 +33,7 @@ public class UserService {
                 .collect(Collectors.toList());
     }
 
-    public UserPageDto getAllPaginatedUsers(int pageIndex, int itemsPerPage) throws UserNotFoundException {
+    public PageDto<UserResponseDto> getAllPaginatedUsers(int pageIndex, int itemsPerPage) throws UserNotFoundException {
         PageRequest pageRequest = PageRequest.of(pageIndex, itemsPerPage);
         Page<User> page = userRepository.findAllPaginatedUsers(pageRequest);
 
@@ -47,7 +48,7 @@ public class UserService {
                 )
         );
 
-        return new UserPageDto(
+        return new PageDto<UserResponseDto>(
                 dtoPage.getContent(),
                 dtoPage.getTotalPages(),
                 (int) dtoPage.getTotalElements(),
@@ -85,18 +86,18 @@ public class UserService {
         );
     }
 
-    public UserResponseDto createUser(UserCreateDto userCreateDto) throws UserNotCreatedException {
+    public UserResponseDto createUser(UserCreationDto userCreationDto) throws UserNotCreatedException {
         User user = User.builder()
-                .firstName(userCreateDto.firstName())
-                .lastName(userCreateDto.lastName())
-                .username(userCreateDto.username())
-                .email(userCreateDto.email())
-                .phoneNumber(userCreateDto.phoneNumber())
-                .topInterests(userCreateDto.topInterests())
+                .firstName(userCreationDto.firstName())
+                .lastName(userCreationDto.lastName())
+                .username(userCreationDto.username())
+                .email(userCreationDto.email())
+                .phoneNumber(userCreationDto.phoneNumber())
+                .topInterests(userCreationDto.topInterests())
                 .build();
 
         User savedUser = userRepository.save(user);
-        
+
         return new UserResponseDto(
                 savedUser.getFirstName(),
                 savedUser.getLastName(),

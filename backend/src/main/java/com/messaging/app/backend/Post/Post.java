@@ -1,31 +1,22 @@
 package com.messaging.app.backend.Post;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
-
+import com.messaging.app.backend.Tags.Tag;
 import com.messaging.app.backend.User.User;
-
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.SequenceGenerator;
-import jakarta.persistence.Table;
-import jakarta.persistence.UniqueConstraint;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
+
+import java.time.Instant;
+import java.util.*;
 
 @Entity
 @Table(name = "posts", schema = "public", uniqueConstraints = {
-    @UniqueConstraint(columnNames = "id")
+        @UniqueConstraint(columnNames = "id")
 })
 @Data
 @Builder
@@ -33,21 +24,42 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class Post {
 
-  @Column(name = "id", nullable = false, updatable = false, unique = true)
-  @Id
-  @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "post_sequence")
-  @SequenceGenerator(name = "post_sequence", sequenceName = "post_sequence", allocationSize = 10)
-  private Long id;
+    @Column(name = "id", nullable = false, updatable = false, unique = true)
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "post_sequence")
+    @SequenceGenerator(name = "post_sequence", sequenceName = "post_sequence", allocationSize = 10)
+    private Long id;
 
-  @Column(name = "hash", nullable = false, updatable = false, unique = true)
-  private final UUID postUUID = UUID.randomUUID();
+    @Column(name = "hash", nullable = false, updatable = false, unique = true)
+    @Builder.Default
+    private final UUID postUUID = UUID.randomUUID();
 
-  @ManyToOne
-  @JoinColumn(name = "user_id", nullable = false)
-  private User author;
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false, updatable = false)
+    private User author;
 
-  @ManyToMany
-  @JoinTable(name = "posts_liked_by_users", joinColumns = @JoinColumn(name = "post_id"), inverseJoinColumns = @JoinColumn(name = "user_id"))
-  @Builder.Default
-  private List<User> likedByUsers = new ArrayList<>();
+    @ManyToMany
+    @JoinTable(name = "posts_liked_by_users", joinColumns = @JoinColumn(name = "post_id"), inverseJoinColumns = @JoinColumn(name = "user_id"))
+    @Builder.Default
+    private List<User> likedByUsers = new ArrayList<>();
+
+    @Column(name = "post_content", nullable = false, updatable = false)
+    @NotBlank(message = "your post cannot be blank")
+    @Size(max = 280)
+    private String postContent;
+
+    @Column(name = "date_posted", nullable = false, updatable = false)
+    @CreationTimestamp
+    @Builder.Default
+    private final Instant datePosted = Instant.now();
+
+    @Column(name = "share_count")
+    @Builder.Default
+    private Integer shareCount = 0;
+
+    @ManyToMany
+    @JoinTable(name = "post_tags", joinColumns = @JoinColumn(name = "post_id"), inverseJoinColumns = @JoinColumn(name = "tag_id"))
+    @Builder.Default
+    private Set<Tag> tags = new HashSet<>();
+
 }
