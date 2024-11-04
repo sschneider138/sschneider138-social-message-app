@@ -3,6 +3,7 @@ package com.messaging.app.backend.post;
 import com.messaging.app.backend.exceptions.PostNotCreatedException;
 import com.messaging.app.backend.exceptions.PostNotFoundException;
 import com.messaging.app.backend.pagination.PageDto;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -11,13 +12,10 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class PostService {
     private final PostRepository postRepository;
-
-    public PostService(PostRepository postRepository) {
-        this.postRepository = postRepository;
-    }
-
+    
     public List<PostResponseDto> getAllPosts() throws PostNotFoundException {
         return postRepository.findAll().stream()
                 .map(

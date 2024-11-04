@@ -1,36 +1,35 @@
 package com.messaging.app.backend.user;
 
-import com.messaging.app.backend.exceptions.UserNotCreatedException;
 import com.messaging.app.backend.exceptions.UserNotFoundException;
 import com.messaging.app.backend.exceptions.UserNotUpdatedException;
 import com.messaging.app.backend.pagination.PageDto;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
-
-    public UserService(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
+    private final PasswordEncoder passwordEncoder;
 
     public List<UserResponseDto> getAllUsers() throws UserNotFoundException {
-        return userRepository.findAll().stream()
-                .map(
-                        user -> new UserResponseDto(
-                                user.getFirstName(),
-                                user.getLastName(),
-                                user.getUsername(),
-                                user.getEmail(),
-                                user.getPhoneNumber(),
-                                user.getTopInterests(),
-                                user.getDateJoined()))
-                .collect(Collectors.toList());
+        return userRepository.findAll().stream().map(
+                user -> new UserResponseDto(
+                        user.getFirstName(),
+                        user.getLastName(),
+                        user.getUsername(),
+                        user.getEmail(),
+                        user.getPhoneNumber(),
+                        user.getTopInterests(),
+                        user.getDateJoined(),
+                        user.getMembershipLength())
+        ).collect(Collectors.toList());
     }
 
     public PageDto<UserResponseDto> getAllPaginatedUsers(int pageIndex, int itemsPerPage) throws UserNotFoundException {
@@ -38,14 +37,14 @@ public class UserService {
         Page<User> page = userRepository.findAll(pageRequest);
 
         Page<UserResponseDto> dtoPage = page.map(user -> new UserResponseDto(
-                        user.getFirstName(),
-                        user.getLastName(),
-                        user.getUsername(),
-                        user.getEmail(),
-                        user.getPhoneNumber(),
-                        user.getTopInterests(),
-                        user.getDateJoined()
-                )
+                user.getFirstName(),
+                user.getLastName(),
+                user.getUsername(),
+                user.getEmail(),
+                user.getPhoneNumber(),
+                user.getTopInterests(),
+                user.getDateJoined(),
+                user.getMembershipLength())
         );
 
         return new PageDto<>(
@@ -68,7 +67,8 @@ public class UserService {
                 user.getEmail(),
                 user.getPhoneNumber(),
                 user.getTopInterests(),
-                user.getDateJoined()
+                user.getDateJoined(),
+                user.getMembershipLength()
         );
     }
 
@@ -82,30 +82,8 @@ public class UserService {
                 user.getEmail(),
                 user.getPhoneNumber(),
                 user.getTopInterests(),
-                user.getDateJoined()
-        );
-    }
-
-    public UserResponseDto createUser(UserCreationDto userCreationDto) throws UserNotCreatedException {
-        User user = User.builder()
-                .firstName(userCreationDto.firstName())
-                .lastName(userCreationDto.lastName())
-                .username(userCreationDto.username())
-                .email(userCreationDto.email())
-                .phoneNumber(userCreationDto.phoneNumber())
-                .topInterests(userCreationDto.topInterests())
-                .build();
-
-        User savedUser = userRepository.save(user);
-
-        return new UserResponseDto(
-                savedUser.getFirstName(),
-                savedUser.getLastName(),
-                savedUser.getUsername(),
-                savedUser.getEmail(),
-                savedUser.getPhoneNumber(),
-                savedUser.getTopInterests(),
-                savedUser.getDateJoined()
+                user.getDateJoined(),
+                user.getMembershipLength()
         );
     }
 
@@ -119,7 +97,8 @@ public class UserService {
                 user.getEmail(),
                 user.getPhoneNumber(),
                 user.getTopInterests(),
-                user.getDateJoined()
+                user.getDateJoined(),
+                user.getMembershipLength()
         );
     }
 
@@ -128,28 +107,33 @@ public class UserService {
         User user = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException("user not found"));
         try {
 
-            if (userUpdateDto.firstName() != null) {
-                user.setFirstName(userUpdateDto.firstName());
+            if (userUpdateDto.getFirstName() != null) {
+                user.setFirstName(userUpdateDto.getFirstName());
             }
 
-            if (userUpdateDto.lastName() != null) {
-                user.setLastName(userUpdateDto.lastName());
+            if (userUpdateDto.getLastName() != null) {
+                user.setLastName(userUpdateDto.getLastName());
             }
 
-            if (userUpdateDto.username() != null) {
-                user.setUsername(userUpdateDto.username());
+            if (userUpdateDto.getUsername() != null) {
+                user.setUsername(userUpdateDto.getUsername());
             }
 
-            if (userUpdateDto.email() != null) {
-                user.setEmail(userUpdateDto.email());
+            if (userUpdateDto.getEmail() != null) {
+                user.setEmail(userUpdateDto.getEmail());
 
             }
-            if (userUpdateDto.phoneNumber() != null) {
-                user.setPhoneNumber(userUpdateDto.phoneNumber());
+
+            if (userUpdateDto.getPhoneNumber() != null) {
+                user.setPhoneNumber(userUpdateDto.getPhoneNumber());
             }
 
-            if (userUpdateDto.topInterests() != null) {
-                user.setTopInterests(userUpdateDto.topInterests());
+            if (userUpdateDto.getPassword() != null) {
+                user.setPassword(passwordEncoder.encode(userUpdateDto.getPassword()));
+            }
+
+            if (userUpdateDto.getTopInterests() != null) {
+                user.setTopInterests(userUpdateDto.getTopInterests());
             }
             User updatedUser = userRepository.save(user);
 
@@ -160,7 +144,9 @@ public class UserService {
                     updatedUser.getEmail(),
                     updatedUser.getPhoneNumber(),
                     updatedUser.getTopInterests(),
-                    updatedUser.getDateJoined());
+                    updatedUser.getDateJoined(),
+                    user.getMembershipLength()
+            );
 
         } catch (UserNotUpdatedException e) {
             throw new UserNotUpdatedException("user found, but not updated: " + e.getMessage());

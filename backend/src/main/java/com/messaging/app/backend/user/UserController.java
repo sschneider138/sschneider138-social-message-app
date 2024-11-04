@@ -3,7 +3,7 @@ package com.messaging.app.backend.user;
 import com.messaging.app.backend.pagination.PageDto;
 import com.messaging.app.backend.pagination.PaginationRequestDto;
 import jakarta.validation.Valid;
-import org.springframework.http.HttpStatus;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -11,13 +11,10 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/user")
+@RequiredArgsConstructor
 public class UserController {
 
     private final UserService userService;
-
-    public UserController(UserService userService) {
-        this.userService = userService;
-    }
 
     @GetMapping("all")
     public ResponseEntity<List<UserResponseDto>> getAllUsers() {
@@ -32,12 +29,6 @@ public class UserController {
         int currentLimit = (paginationRequestDto.itemsPerPage() > 0) ? paginationRequestDto.itemsPerPage() : 10;
         PageDto<UserResponseDto> pageDto = userService.getAllPaginatedUsers(currentPage, currentLimit);
         return ResponseEntity.ok(pageDto);
-    }
-
-    @PostMapping("/new")
-    public ResponseEntity<UserResponseDto> createUser(@Valid @RequestBody UserCreationDto userCreationDto) {
-        UserResponseDto savedUser = userService.createUser(userCreationDto);
-        return ResponseEntity.status(HttpStatus.CREATED).body(savedUser);
     }
 
     @GetMapping("/{id}")

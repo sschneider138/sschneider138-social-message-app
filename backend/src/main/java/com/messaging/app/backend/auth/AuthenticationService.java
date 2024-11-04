@@ -2,9 +2,11 @@ package com.messaging.app.backend.auth;
 
 
 import com.messaging.app.backend.config.JwtService;
-import com.messaging.app.backend.user.Role;
 import com.messaging.app.backend.user.User;
+import com.messaging.app.backend.user.UserAuthenticationDto;
+import com.messaging.app.backend.user.UserCreationDto;
 import com.messaging.app.backend.user.UserRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -19,26 +21,29 @@ public class AuthenticationService {
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
 
-    public AuthenticationResponse register(RegisterRequest request) {
-        var user = User.builder()
-                .firstName(request.getFirstName())
-                .lastName(request.getLastName())
-                .email(request.getEmail())
-                .password(passwordEncoder.encode(request.getPassword()))
-                .role(Role.USER)
+    @Transactional
+    public AuthenticationResponse register(UserCreationDto userDto) {
+        User user = User.builder()
+                .firstName(userDto.getFirstName())
+                .lastName(userDto.getLastName())
+                .username(userDto.getUsername())
+                .email(userDto.getEmail())
+                .phoneNumber(userDto.getPhoneNumber())
+                .password(passwordEncoder.encode(userDto.getPassword()))
+                .topInterests(userDto.getTopInterests())
                 .build();
         repository.save(user);
 
-        var jwtToken = jwtService.generateToken(user);
+        String jwtToken = jwtService.generateToken(user);
         return AuthenticationResponse.builder().token(jwtToken).build();
     }
 
-    public AuthenticationResponse authenticate(AuthenticationRequest request) {
+    public AuthenticationResponse authenticate(UserAuthenticationDto userAuthenticationDto) {
         authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
+                new UsernamePasswordAuthenticationToken(userAuthenticationDto.email(), userAuthenticationDto.password()));
 
-        var user = repository.findByEmail(request.getEmail()).orElseThrow();
-        var jwtToken = jwtService.generateToken(user);
+        User user = repository.findByEmail(userAuthenticationDto.email()).orElseThrow();
+        String jwtToken = jwtService.generateToken(user);
         return AuthenticationResponse.builder().token(jwtToken).build();
     }
 }

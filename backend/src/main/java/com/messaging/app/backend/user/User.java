@@ -2,10 +2,7 @@ package com.messaging.app.backend.user;
 
 import com.messaging.app.backend.post.Post;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -13,7 +10,7 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.Duration;
 import java.time.Instant;
@@ -31,6 +28,8 @@ import java.util.UUID;
 @NoArgsConstructor
 public class User implements UserDetails {
 
+    private transient PasswordEncoder passwordEncoder;
+
     @Column(name = "date_joined", nullable = false, updatable = false)
     @CreationTimestamp
     @Builder.Default
@@ -43,21 +42,22 @@ public class User implements UserDetails {
     private Long id;
 
     @Column(name = "hash", nullable = false, updatable = false, unique = true)
+    @Builder.Default
     private UUID userUUID = UUID.randomUUID();
 
     @Column(name = "role", nullable = false, updatable = false)
-    @NotBlank(message = "role cannot be blank")
+    @NotNull(message = "role cannot be blank")
     @Enumerated(EnumType.STRING)
-    private Role role;
+    @Builder.Default
+    private Role role = Role.USER;
 
-    @NotBlank
     @NotBlank(message = "password cannot be blank")
-    @Size(min = 8, max = 32, message = "password must be between 8 and 32 characters")
     @Pattern(
             regexp = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=!])(?=\\S+$).{8,}$",
             message = "Password must be at least 8 characters and include at least one uppercase letter, one lowercase letter, one digit, and one special character"
     )
     private String password;
+
 
     @Column(name = "first_name", nullable = false)
     @NotBlank(message = "first name is required")
@@ -88,7 +88,7 @@ public class User implements UserDetails {
     private List<String> topInterests = new ArrayList<>();
 
     @ManyToMany
-    @JoinTable(name = "user_followers", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "follower_id"))
+    @JoinTable(name = "user_followers", joinColumns = @JoinColumn(name = "followed_user_id"), inverseJoinColumns = @JoinColumn(name = "following_user_id"))
     @Builder.Default
     private List<User> followers = new ArrayList<>();
 
@@ -104,11 +104,6 @@ public class User implements UserDetails {
     @JoinTable(name = "posts_liked_by_users", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "post_id"))
     @Builder.Default
     private List<Post> likedPosts = new ArrayList<>();
-
-    @PrePersist
-    public void hashPassword() {
-        this.password = new BCryptPasswordEncoder().encode(this.password);
-    }
 
     public long getMembershipLength() {
         return Duration.between(this.dateJoined, Instant.now()).toDays();

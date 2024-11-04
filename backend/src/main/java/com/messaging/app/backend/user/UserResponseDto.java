@@ -12,5 +12,7 @@ public record UserResponseDto(
         String email,
         String phoneNumber,
         List<String> topInterests,
-        Instant dateJoined) {
+        Instant dateJoined,
+        long membershipLengthInDays
+) {
 }

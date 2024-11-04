@@ -3,6 +3,7 @@ package com.messaging.app.backend.post;
 import com.messaging.app.backend.pagination.PageDto;
 import com.messaging.app.backend.pagination.PaginationRequestDto;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -11,13 +12,10 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/post")
+@RequiredArgsConstructor
 public class PostController {
 
     private final PostService postService;
-
-    public PostController(PostService postService) {
-        this.postService = postService;
-    }
 
     @GetMapping("all")
     public ResponseEntity<List<PostResponseDto>> getAllPosts() {

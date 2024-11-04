@@ -1,5 +1,6 @@
 package com.messaging.app.backend.tags;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -8,12 +9,9 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/tag")
+@RequiredArgsConstructor
 public class TagController {
     private final TagService tagService;
-
-    public TagController(TagService tagService) {
-        this.tagService = tagService;
-    }
 
     @PostMapping
     public ResponseEntity<Tag> createTag(@RequestParam String name) {
