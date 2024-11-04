@@ -11,7 +11,7 @@ import java.util.Map;
 @RequestMapping("/health-check")
 public class HealthCheckController {
 
-    @GetMapping("/")
+    @GetMapping
     public Map<String, String> HealthCheck() {
         var status = new HashMap<String, String>();
         status.put("status", "ok");
