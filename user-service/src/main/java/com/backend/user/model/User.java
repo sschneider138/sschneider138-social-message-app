@@ -1,34 +1,46 @@
 package com.backend.user.model;
 
-import com.backend.user.role.Role;
-import jakarta.persistence.*;
-import jakarta.validation.constraints.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import org.hibernate.annotations.CreationTimestamp;
-
 import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import org.hibernate.annotations.CreationTimestamp;
+
+import com.backend.user.role.Role;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.SequenceGenerator;
+import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 @Entity
 @Table(name = "t_users", schema = "public", uniqueConstraints = {
-        @UniqueConstraint(columnNames = { "username", "email", "phone_number" }) })
+        @UniqueConstraint(columnNames = { "id", "userUUID", "username", "email", "phone_number" }) })
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 public class User {
-
-    @Column(name = "date_joined", nullable = false, updatable = false)
-    @NotNull(message = "date joined is required")
-    @CreationTimestamp
-    @Builder.Default
-    private final Instant dateJoined = Instant.now();
 
     @Column(name = "id", nullable = false, updatable = false, unique = true)
     @NotNull(message = "id is required")
@@ -37,7 +49,7 @@ public class User {
     @SequenceGenerator(name = "user_sequence", sequenceName = "user_sequence", allocationSize = 10)
     private Long id;
 
-    @Column(name = "uuid", nullable = false, updatable = false, unique = true)
+    @Column(name = "user_uuid", nullable = false, updatable = false, unique = true)
     @NotNull(message = "uuid is required")
     @Builder.Default
     private UUID userUUID = UUID.randomUUID();
@@ -81,11 +93,9 @@ public class User {
     @Builder.Default
     private List<String> topInterests = new ArrayList<>();
 
-    @ManyToMany
     @JoinTable(name = "t_user_followers", joinColumns = @JoinColumn(name = "followed_user_id"), inverseJoinColumns = @JoinColumn(name = "following_user_id"))
     private List<User> followers;
 
-    @ManyToMany(mappedBy = "followers")
     private List<User> following;
 
     @ElementCollection
@@ -95,6 +105,12 @@ public class User {
     @ElementCollection
     @Builder.Default
     private List<UUID> likedByUserIds = new ArrayList<>();
+
+    @Column(name = "date_joined", nullable = false, updatable = false)
+    @NotNull(message = "date joined is required")
+    @CreationTimestamp
+    @Builder.Default
+    private final Instant dateJoined = Instant.now();
 
     public long getMembershipLength() {
         return Duration.between(this.dateJoined, Instant.now()).toDays();
