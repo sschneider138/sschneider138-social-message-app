@@ -41,8 +41,7 @@ public class UserService {
                 dtoPage.getTotalPages(),
                 (int) dtoPage.getTotalElements(),
                 dtoPage.getNumber(),
-                dtoPage.getSize()
-        );
+                dtoPage.getSize());
     }
 
     public UserResponseDto createUser(UserCreationRequestDto userCreationRequestDto) {
@@ -55,7 +54,8 @@ public class UserService {
         }
 
         if (!isPasswordValid(userCreationRequestDto.password())) {
-            throw new RuntimeException("Password must be at least 8 characters and include at least one uppercase letter, one lowercase letter, one digit, and one special character");
+            throw new RuntimeException(
+                    "Password must be at least 8 characters and include at least one uppercase letter, one lowercase letter, one digit, and one special character");
         }
 
         User user = User.builder()
@@ -72,24 +72,27 @@ public class UserService {
         return mapUserToDto(savedUser);
     }
 
-
-    public UserResponseDto getByUUID(UUID uuid) {
-        User user = userRepository.findByUserUUID(uuid).orElseThrow(() -> new EntityNotFoundException("user not found for uuid: " + uuid));
+    public UserResponseDto getByUUID(UUID userUUID) {
+        User user = userRepository.findByUserUUID(userUUID)
+                .orElseThrow(() -> new EntityNotFoundException("user not found for uuid: " + userUUID));
 
         return mapUserToDto(user);
     }
 
     public UserResponseDto getByUsername(String username) {
-        User user = userRepository.findByUsername(username).orElseThrow(() -> new EntityNotFoundException("user not found with username: " + username));
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new EntityNotFoundException("user not found with username: " + username));
 
         return mapUserToDto(user);
     }
 
-    // FIXME: in future, set so that only authenticated user may performance update for his own profile
+    // FIXME: in future, set so that only authenticated user may performance update
+    // for his own profile
     public UserResponseDto partialUpdateIndividualUser(
-            UUID uuid, UserUpdateRequestDto userUpdateRequestDto) {
+            UUID userUUID, UserUpdateRequestDto userUpdateRequestDto) {
 
-        User user = userRepository.findByUserUUID(uuid).orElseThrow(() -> new EntityNotFoundException("user not found"));
+        User user = userRepository.findByUserUUID(userUUID)
+                .orElseThrow(() -> new EntityNotFoundException("user not found"));
 
         if (!passwordEncoder.matches(userUpdateRequestDto.password(), user.getPassword())) {
             throw new RuntimeException("Provided password does not match current user password");
@@ -131,7 +134,7 @@ public class UserService {
             return mapUserToDto(updatedUser);
 
         } catch (RuntimeException e) {
-            throw new RuntimeException("failed to update user with uuid: " + uuid, e);
+            throw new RuntimeException("failed to update user with uuid: " + userUUID, e);
         }
 
     }
@@ -146,13 +149,13 @@ public class UserService {
                 user.getPhoneNumber(),
                 user.getTopInterests(),
                 user.getDateJoined(),
-                user.getMembershipLength()
-        );
+                user.getMembershipLength());
     }
 
     private boolean isPasswordValid(String password) {
         // password must be 8 characters and include at least one uppercase letter,
         // one lowercase letter, one digit, and one special character
-        return password != null && password.matches("^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=!])(?=\\S+$).{8,}$");
+        return password != null
+                && password.matches("^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=!])(?=\\S+$).{8,}$");
     }
 }

@@ -11,7 +11,9 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.Instant;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 
 @Entity
 @Table(name = "t_posts", schema = "public", uniqueConstraints = {
@@ -43,7 +45,7 @@ public class Post {
     @CollectionTable(name = "uuid_of_users_who_liked_this_post", joinColumns = @JoinColumn(name = "post_id"))
     @Column(name = "user_id")
     @Builder.Default
-    private List<UUID> uuidOfUsersWhoLikedThisPost = new ArrayList<>();
+    private List<UUID> uuidsOfUsersWhoLikedThisPost = new ArrayList<>();
 
     @Column(name = "post_content", nullable = false, updatable = false)
     @NotBlank(message = "your post cannot be blank")
@@ -61,12 +63,12 @@ public class Post {
 
     @Column(name = "post_like_count", nullable = false)
     @Builder.Default
-    private Integer likeCount = uuidOfUsersWhoLikedThisPost.size();
+    private Integer likeCount = uuidsOfUsersWhoLikedThisPost.size();
 
     @ElementCollection
     @CollectionTable(name = "post_tags", joinColumns = @JoinColumn(name = "post_id"))
     @Column(name = "tag")
     @Builder.Default
-    private Set<String> tags = new HashSet<>();
+    private List<String> tags = new ArrayList<>();
 
 }

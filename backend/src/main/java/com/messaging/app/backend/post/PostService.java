@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class PostService {
     private final PostRepository postRepository;
-    
+
     public List<PostResponseDto> getAllPosts() throws PostNotFoundException {
         return postRepository.findAll().stream()
                 .map(
@@ -30,7 +30,6 @@ public class PostService {
 
     }
 
-
     public PageDto<PostResponseDto> getAllPaginatedPosts(int pageIndex, int itemsPerPage) throws PostNotFoundException {
         PageRequest pageRequest = PageRequest.of(pageIndex, itemsPerPage);
         Page<Post> page = postRepository.findAll(pageRequest);
@@ -42,17 +41,14 @@ public class PostService {
                         post.getPostContent(),
                         post.getDatePosted(),
                         post.getShareCount(),
-                        post.getTags()
-                )
-        );
+                        post.getTags()));
 
         return new PageDto<>(
                 dtoPage.getContent(),
                 dtoPage.getTotalPages(),
                 (int) dtoPage.getTotalElements(),
                 dtoPage.getNumber(),
-                dtoPage.getSize()
-        );
+                dtoPage.getSize());
     }
 
     public PostResponseDto createPost(PostCreationDto postCreationDto) throws PostNotCreatedException {
@@ -69,7 +65,6 @@ public class PostService {
                 savedPost.getPostContent(),
                 savedPost.getDatePosted(),
                 savedPost.getShareCount(),
-                savedPost.getTags()
-        );
+                savedPost.getTags());
     }
 }
