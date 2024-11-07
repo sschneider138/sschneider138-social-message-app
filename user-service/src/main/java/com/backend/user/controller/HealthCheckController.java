@@ -10,10 +10,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/health-check")
+@RequestMapping("/api/health")
 public class HealthCheckController {
 
-    @GetMapping
+    @GetMapping("/check")
     @ResponseStatus(HttpStatus.OK)
     public Map<String, String> HealthCheck() {
         HashMap<String, String> status = new HashMap<>();
