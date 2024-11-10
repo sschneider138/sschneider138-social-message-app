@@ -34,10 +34,10 @@ public class User implements UserDetails {
     @SequenceGenerator(name = "user_sequence", sequenceName = "user_sequence", allocationSize = 10)
     private Long id;
 
-    @Column(name = "user_uuid", nullable = false, updatable = false, unique = true)
+    @Column(name = "user_uuid", nullable = false, updatable = false, unique = true, columnDefinition = "CHAR(36)")
     @NotNull(message = "uuid is required")
     @Builder.Default
-    private final UUID userUUID = UUID.randomUUID();
+    private final String userUUID = UUID.randomUUID().toString();
 
     @Column(name = "role", nullable = false, updatable = false)
     @NotNull(message = "role cannot be blank")

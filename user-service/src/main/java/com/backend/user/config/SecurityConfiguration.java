@@ -17,7 +17,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfiguration {
 
     private static final String[] WHITELIST_URL = {
-            "/api/health/**",
+            "/api/health/check",
             "/api/auth/register",
             "/api/auth/authenticate",
             "/api/user/all",

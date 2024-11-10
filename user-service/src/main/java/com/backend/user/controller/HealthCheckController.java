@@ -15,9 +15,19 @@ public class HealthCheckController {
 
     @GetMapping("/check")
     @ResponseStatus(HttpStatus.OK)
-    public Map<String, String> HealthCheck() {
+    public Map<String, String> unsecuredHealthEndpoint() {
         HashMap<String, String> status = new HashMap<>();
         status.put("status", "ok");
+        status.put("secureEndpoint", "false");
+        return status;
+    }
+
+    @GetMapping("/secure/check")
+    @ResponseStatus(HttpStatus.OK)
+    public Map<String, String> securedHealthEndpoint() {
+        HashMap<String, String> status = new HashMap<>();
+        status.put("status", "ok");
+        status.put("secureEndpoint", "true");
         return status;
     }
 

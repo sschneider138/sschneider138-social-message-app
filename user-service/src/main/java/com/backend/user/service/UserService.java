@@ -15,7 +15,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -72,7 +71,7 @@ public class UserService {
         return mapUserToDto(savedUser);
     }
 
-    public UserResponseDto getByUUID(UUID userUUID) {
+    public UserResponseDto getByUUID(String userUUID) {
         User user = userRepository.findByUserUUID(userUUID)
                 .orElseThrow(() -> new EntityNotFoundException("user not found for uuid: " + userUUID));
 
@@ -89,7 +88,7 @@ public class UserService {
     // FIXME: in future, set so that only authenticated user may performance update
     // for his own profile
     public UserResponseDto partialUpdateIndividualUser(
-            UUID userUUID, UserUpdateRequestDto userUpdateRequestDto) {
+            String userUUID, UserUpdateRequestDto userUpdateRequestDto) {
 
         User user = userRepository.findByUserUUID(userUUID)
                 .orElseThrow(() -> new EntityNotFoundException("user not found"));

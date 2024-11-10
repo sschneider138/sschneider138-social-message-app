@@ -1,6 +1,9 @@
 package com.backend.user.controller;
 
-import com.backend.user.dto.*;
+import com.backend.user.dto.PageDto;
+import com.backend.user.dto.PaginationRequestDto;
+import com.backend.user.dto.UserResponseDto;
+import com.backend.user.dto.UserUpdateRequestDto;
 import com.backend.user.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -8,7 +11,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/user")
@@ -33,14 +35,14 @@ public class UserController {
 
     @GetMapping("/get/{uuid}")
     @ResponseStatus(HttpStatus.OK)
-    public UserResponseDto getIndividualUser(@PathVariable UUID uuid) {
+    public UserResponseDto getIndividualUser(@PathVariable String uuid) {
         return userService.getByUUID(uuid);
     }
 
     @PatchMapping("/update/{uuid}")
     @ResponseStatus(HttpStatus.OK)
     public UserResponseDto partialUpdateIndividualUser(
-            @PathVariable UUID uuid, @Valid @RequestBody UserUpdateRequestDto userUpdateRequestDto) {
+            @PathVariable String uuid, @Valid @RequestBody UserUpdateRequestDto userUpdateRequestDto) {
         return userService.partialUpdateIndividualUser(uuid, userUpdateRequestDto);
     }
 }
