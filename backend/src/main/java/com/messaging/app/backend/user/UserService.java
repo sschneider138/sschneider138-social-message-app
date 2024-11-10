@@ -1,16 +1,18 @@
 package com.messaging.app.backend.user;
 
-import com.messaging.app.backend.exceptions.UserNotFoundException;
-import com.messaging.app.backend.exceptions.UserNotUpdatedException;
-import com.messaging.app.backend.pagination.PageDto;
-import lombok.RequiredArgsConstructor;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.stream.Collectors;
+import com.messaging.app.backend.exceptions.UserNotFoundException;
+import com.messaging.app.backend.exceptions.UserNotUpdatedException;
+import com.messaging.app.backend.pagination.PageDto;
+
+import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
@@ -28,8 +30,8 @@ public class UserService {
                         user.getPhoneNumber(),
                         user.getTopInterests(),
                         user.getDateJoined(),
-                        user.getMembershipLength())
-        ).collect(Collectors.toList());
+                        user.getMembershipLength()))
+                .collect(Collectors.toList());
     }
 
     public PageDto<UserResponseDto> getAllPaginatedUsers(int pageIndex, int itemsPerPage) throws UserNotFoundException {
@@ -44,21 +46,19 @@ public class UserService {
                 user.getPhoneNumber(),
                 user.getTopInterests(),
                 user.getDateJoined(),
-                user.getMembershipLength())
-        );
+                user.getMembershipLength()));
 
         return new PageDto<>(
                 dtoPage.getContent(),
                 dtoPage.getTotalPages(),
                 (int) dtoPage.getTotalElements(),
                 dtoPage.getNumber(),
-                dtoPage.getSize()
-        );
+                dtoPage.getSize());
     }
 
-
     public UserResponseDto getById(Long id) throws UserNotFoundException {
-        User user = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException("user not found for id: " + id));
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new UserNotFoundException("user not found for id: " + id));
 
         return new UserResponseDto(
                 user.getFirstName(),
@@ -68,12 +68,12 @@ public class UserService {
                 user.getPhoneNumber(),
                 user.getTopInterests(),
                 user.getDateJoined(),
-                user.getMembershipLength()
-        );
+                user.getMembershipLength());
     }
 
     public UserResponseDto getByUsername(String username) {
-        User user = userRepository.findByUsername(username).orElseThrow(() -> new UserNotFoundException("user not found with username: " + username));
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UserNotFoundException("user not found with username: " + username));
 
         return new UserResponseDto(
                 user.getFirstName(),
@@ -83,12 +83,12 @@ public class UserService {
                 user.getPhoneNumber(),
                 user.getTopInterests(),
                 user.getDateJoined(),
-                user.getMembershipLength()
-        );
+                user.getMembershipLength());
     }
 
     public UserResponseDto getIndividualUser(Long id) throws UserNotFoundException {
-        User user = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException("user not found for id: " + id));
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new UserNotFoundException("user not found for id: " + id));
 
         return new UserResponseDto(
                 user.getFirstName(),
@@ -98,12 +98,11 @@ public class UserService {
                 user.getPhoneNumber(),
                 user.getTopInterests(),
                 user.getDateJoined(),
-                user.getMembershipLength()
-        );
+                user.getMembershipLength());
     }
 
-    public UserResponseDto partialUpdateIndividualUser(Long id, UserUpdateDto userUpdateDto) throws
-            UserNotUpdatedException {
+    public UserResponseDto partialUpdateIndividualUser(Long id, UserUpdateDto userUpdateDto)
+            throws UserNotUpdatedException {
         User user = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException("user not found"));
         try {
 
@@ -145,8 +144,7 @@ public class UserService {
                     updatedUser.getPhoneNumber(),
                     updatedUser.getTopInterests(),
                     updatedUser.getDateJoined(),
-                    user.getMembershipLength()
-            );
+                    user.getMembershipLength());
 
         } catch (UserNotUpdatedException e) {
             throw new UserNotUpdatedException("user found, but not updated: " + e.getMessage());

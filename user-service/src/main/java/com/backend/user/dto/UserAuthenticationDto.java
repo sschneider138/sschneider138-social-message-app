@@ -7,5 +7,6 @@ public record UserAuthenticationDto(
         @NotBlank(message = "password cannot be blank") String password,
 
         @NotBlank(message = "email is required") @Email(message = "please enter a valid email") String email
+
 ) {
 }

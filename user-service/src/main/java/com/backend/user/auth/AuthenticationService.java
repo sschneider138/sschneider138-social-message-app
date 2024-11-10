@@ -9,7 +9,6 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -34,16 +33,17 @@ public class AuthenticationService {
                 .build();
         repository.save(user);
 
-        String jwtToken = jwtService.generateToken((UserDetails) user);
+        String jwtToken = jwtService.generateToken(user);
         return AuthenticationResponse.builder().token(jwtToken).build();
     }
 
     public AuthenticationResponse authenticate(UserAuthenticationDto userAuthenticationDto) {
-        authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(userAuthenticationDto.email(), userAuthenticationDto.password()));
+        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
+                userAuthenticationDto.email(), userAuthenticationDto.password()));
 
-        User user = repository.findByUsername(userAuthenticationDto.email()).orElseThrow();
-        String jwtToken = jwtService.generateToken((UserDetails) user);
+        User user = repository.findByEmail(userAuthenticationDto.email()).orElseThrow();
+        String jwtToken = jwtService.generateToken(user);
         return AuthenticationResponse.builder().token(jwtToken).build();
     }
+
 }

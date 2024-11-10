@@ -1,46 +1,31 @@
 package com.backend.user.model;
 
-import java.time.Duration;
-import java.time.Instant;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
-
-import org.hibernate.annotations.CreationTimestamp;
-
 import com.backend.user.role.Role;
-
-import jakarta.persistence.Column;
-import jakarta.persistence.ElementCollection;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.SequenceGenerator;
-import jakarta.persistence.Table;
-import jakarta.persistence.UniqueConstraint;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Size;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
+import java.time.Duration;
+import java.time.Instant;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.UUID;
 
 @Entity
 @Table(name = "t_users", schema = "public", uniqueConstraints = {
-        @UniqueConstraint(columnNames = { "id", "userUUID", "username", "email", "phone_number" }) })
+        @UniqueConstraint(columnNames = {"id", "userUUID", "username", "email", "phone_number"})})
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class User {
+public class User implements UserDetails {
 
     @Column(name = "id", nullable = false, updatable = false, unique = true)
     @NotNull(message = "id is required")
@@ -52,7 +37,7 @@ public class User {
     @Column(name = "user_uuid", nullable = false, updatable = false, unique = true)
     @NotNull(message = "uuid is required")
     @Builder.Default
-    private UUID userUUID = UUID.randomUUID();
+    private final UUID userUUID = UUID.randomUUID();
 
     @Column(name = "role", nullable = false, updatable = false)
     @NotNull(message = "role cannot be blank")
@@ -93,9 +78,12 @@ public class User {
     @Builder.Default
     private List<String> topInterests = new ArrayList<>();
 
-    @JoinTable(name = "t_user_followers", joinColumns = @JoinColumn(name = "followed_user_id"), inverseJoinColumns = @JoinColumn(name = "following_user_id"))
+    @ElementCollection
+    @Column(name = "followers", nullable = false)
     private List<User> followers;
 
+    @ElementCollection
+    @Column(name = "following", nullable = false)
     private List<User> following;
 
     @ElementCollection
@@ -114,6 +102,11 @@ public class User {
 
     public long getMembershipLength() {
         return Duration.between(this.dateJoined, Instant.now()).toDays();
+    }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of();
     }
 
 }

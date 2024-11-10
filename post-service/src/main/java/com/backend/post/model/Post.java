@@ -17,7 +17,7 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "t_posts", schema = "public", uniqueConstraints = {
-        @UniqueConstraint(columnNames = {"id", "postUUID"})
+        @UniqueConstraint(columnNames = { "id", "postUUID" })
 })
 @Data
 @Builder

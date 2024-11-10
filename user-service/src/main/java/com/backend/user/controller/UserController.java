@@ -23,7 +23,6 @@ public class UserController {
         return userService.getAllUsers();
     }
 
-
     @GetMapping("/all/paginated")
     @ResponseStatus(HttpStatus.OK)
     public PageDto<UserResponseDto> getAllPaginatedUsers(@RequestBody PaginationRequestDto paginationRequestDto) {
@@ -32,19 +31,11 @@ public class UserController {
         return userService.getAllPaginatedUsers(currentPage, currentLimit);
     }
 
-    @PostMapping("/create")
-    @ResponseStatus(HttpStatus.CREATED)
-    public UserResponseDto createNewUser(@RequestBody UserCreationRequestDto userCreationRequestDto) {
-        return userService.createUser(userCreationRequestDto);
-    }
-
-
     @GetMapping("/get/{uuid}")
     @ResponseStatus(HttpStatus.OK)
     public UserResponseDto getIndividualUser(@PathVariable UUID uuid) {
         return userService.getByUUID(uuid);
     }
-
 
     @PatchMapping("/update/{uuid}")
     @ResponseStatus(HttpStatus.OK)
