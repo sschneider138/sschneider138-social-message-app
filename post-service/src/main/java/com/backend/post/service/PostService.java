@@ -1,17 +1,20 @@
 package com.backend.post.service;
 
-import com.backend.post.dto.PageDto;
-import com.backend.post.dto.PostCreationDto;
-import com.backend.post.dto.PostResponseDto;
-import com.backend.post.model.Post;
-import com.backend.post.repository.PostRepository;
-import lombok.RequiredArgsConstructor;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.stream.Collectors;
+import com.backend.post.dto.PageDto;
+import com.backend.post.dto.PostCreationDto;
+import com.backend.post.dto.PostResponseDto;
+import com.backend.post.dto.PostUpdateDto;
+import com.backend.post.model.Post;
+import com.backend.post.repository.PostRepository;
+
+import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
@@ -49,6 +52,27 @@ public class PostService {
         return mapPostToDto(savedPost);
     }
 
+    public PostResponseDto updatePost(String postUUID, PostUpdateDto postUpdateDto) {
+        Post post = postRepository.findByPostUUID(postUUID).orElseThrow(() -> new RuntimeException("post not found"));
+
+        try {
+            if (postUpdateDto.postContent() != null) {
+                post.setPostContent(postUpdateDto.postContent());
+            }
+
+            if (postUpdateDto.uuidsOfUsersWhoLikedThisPost() != null) {
+                post.setUuidsOfUsersWhoLikedThisPost(postUpdateDto.uuidsOfUsersWhoLikedThisPost());
+                post.setLikeCount(postUpdateDto.uuidsOfUsersWhoLikedThisPost().size());
+            }
+
+        } catch (RuntimeException e) {
+            throw new RuntimeException("failed to update post with uuid: " + postUUID);
+        }
+
+        Post savedPost = postRepository.save(post);
+        return mapPostToDto(savedPost);
+    }
+
     private PostResponseDto mapPostToDto(Post post) {
         return new PostResponseDto(
                 post.getPostUUID(),
@@ -58,7 +82,6 @@ public class PostService {
                 post.getDatePosted(),
                 post.getShareCount(),
                 post.getLikeCount(),
-                post.getTags()
-        );
+                post.getTags());
     }
 }

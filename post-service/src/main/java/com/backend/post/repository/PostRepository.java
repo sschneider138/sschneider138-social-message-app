@@ -1,13 +1,13 @@
 package com.backend.post.repository;
 
-import com.backend.post.model.Post;
+import java.util.Optional;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import java.util.Optional;
-import java.util.UUID;
+import com.backend.post.model.Post;
 
 @Repository
 public interface PostRepository extends JpaRepository<Post, Long> {
-    Optional<Post> findByPostUUID(UUID postUUID);
+    Optional<Post> findByPostUUID(String postUUID);
 }

@@ -2,15 +2,14 @@ package com.backend.post.dto;
 
 import java.time.Instant;
 import java.util.List;
-import java.util.UUID;
 
 public record PostResponseDto(
 
-        UUID postUUID,
+        String postUUID,
 
-        UUID authorUUID,
+        String authorUUID,
 
-        List<UUID> uuidsOfUsersWhoLikedThisPost,
+        List<String> uuidsOfUsersWhoLikedThisPost,
 
         String postContent,
 

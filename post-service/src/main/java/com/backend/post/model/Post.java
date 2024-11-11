@@ -1,6 +1,23 @@
 package com.backend.post.model;
 
-import jakarta.persistence.*;
+import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+
+import org.hibernate.annotations.CreationTimestamp;
+
+import jakarta.persistence.CollectionTable;
+import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.SequenceGenerator;
+import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -8,12 +25,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.CreationTimestamp;
-
-import java.time.Instant;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
 
 @Entity
 @Table(name = "t_posts", schema = "public", uniqueConstraints = {
@@ -32,20 +43,20 @@ public class Post {
     @SequenceGenerator(name = "post_sequence", sequenceName = "post_sequence", allocationSize = 10)
     private Long id;
 
-    @Column(name = "post_uuid", nullable = false, updatable = false, unique = true)
+    @Column(name = "post_uuid", nullable = false, updatable = false, unique = true, columnDefinition = "CHAR(36)")
     @NotNull(message = "uuid is required")
     @Builder.Default
-    private UUID postUUID = UUID.randomUUID();
+    private String postUUID = UUID.randomUUID().toString();
 
     @Column(name = "author_uuid", nullable = false)
     @NotNull(message = "author uuid is required")
-    private UUID authorUUID;
+    private String authorUUID;
 
     @ElementCollection
     @CollectionTable(name = "uuid_of_users_who_liked_this_post", joinColumns = @JoinColumn(name = "post_id"))
     @Column(name = "user_id")
     @Builder.Default
-    private List<UUID> uuidsOfUsersWhoLikedThisPost = new ArrayList<>();
+    private List<String> uuidsOfUsersWhoLikedThisPost = new ArrayList<>();
 
     @Column(name = "post_content", nullable = false, updatable = false)
     @NotBlank(message = "your post cannot be blank")
@@ -63,7 +74,7 @@ public class Post {
 
     @Column(name = "post_like_count", nullable = false)
     @Builder.Default
-    private Integer likeCount = uuidsOfUsersWhoLikedThisPost.size();
+    private Integer likeCount = 0;
 
     @ElementCollection
     @CollectionTable(name = "post_tags", joinColumns = @JoinColumn(name = "post_id"))
