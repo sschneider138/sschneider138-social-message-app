@@ -25,6 +25,7 @@ public class SecurityConfiguration {
             "/api/user/all/paginated",
             "/api/user/get/{uuid}",
             "/swagger-ui/**",
+            "/api-docs/**",
             "/v3/api-docs*/**"
     };
     private final JwtAuthenticationFilter jwtAuthFilter;
