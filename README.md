@@ -23,6 +23,7 @@ This application is a messaging client that includes all the core functionalies 
 * Backend:
   * Java Spring Boot microservices
   * MySQL database with phpMyAdmin
+  * OpenFeign HTTP client for inter-container communication
 
 * Frontend:
   * NextJS with TypeScript
