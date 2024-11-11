@@ -14,7 +14,8 @@ public class Routes {
     @Bean
     public RouterFunction<ServerResponse> userServiceRoute() {
         return GatewayRouterFunctions.route("user_service")
-                .route(RequestPredicates.path("/api/user"), HandlerFunctions.http("http://localhost:8080"))
+                .route(RequestPredicates.path("/api/user/**")
+                        .or(RequestPredicates.path("/api/auth/**")), HandlerFunctions.http("http://localhost:8080"))
                 .build();
     }
 
