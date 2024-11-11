@@ -1,7 +1,7 @@
 package com.backend.post.dto;
 
 import java.time.Instant;
-import java.util.List;
+import java.util.Set;
 
 public record PostResponseDto(
 
@@ -9,7 +9,7 @@ public record PostResponseDto(
 
         String authorUUID,
 
-        List<String> uuidsOfUsersWhoLikedThisPost,
+        Set<String> uuidsOfUsersWhoLikedThisPost,
 
         String postContent,
 
@@ -19,5 +19,5 @@ public record PostResponseDto(
 
         Integer likeCount,
 
-        List<String> tags) {
+        Set<String> tags) {
 }

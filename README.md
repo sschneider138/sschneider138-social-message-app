@@ -23,11 +23,16 @@ This application is a messaging client that includes all the core functionalies 
 * Backend:
   * Java Spring Boot microservices
   * MySQL database with phpMyAdmin
-  * Docker for containerization
-  * Kubernetes for container orchestration
 
 * Frontend:
   * NextJS with TypeScript
+
+* DevOps:
+  * Docker for containerization
+  * Kubernetes for container orchestration
+
+* Documentation:
+  * Swagger
 
 # Installation
 

@@ -1,6 +1,6 @@
 package com.backend.post.dto;
 
-import java.util.List;
+import java.util.Set;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -12,5 +12,5 @@ public record PostCreationDto(
 
         @NotBlank(message = "post content cannot be null") @Size(max = 280) String postContent,
 
-        List<String> tags) {
+        Set<String> tags) {
 }

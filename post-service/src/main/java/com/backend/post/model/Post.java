@@ -1,8 +1,8 @@
 package com.backend.post.model;
 
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 import org.hibernate.annotations.CreationTimestamp;
@@ -56,7 +56,7 @@ public class Post {
     @CollectionTable(name = "uuid_of_users_who_liked_this_post", joinColumns = @JoinColumn(name = "post_id"))
     @Column(name = "user_id")
     @Builder.Default
-    private List<String> uuidsOfUsersWhoLikedThisPost = new ArrayList<>();
+    private Set<String> uuidsOfUsersWhoLikedThisPost = new HashSet<>();
 
     @Column(name = "post_content", nullable = false, updatable = false)
     @NotBlank(message = "your post cannot be blank")
@@ -80,6 +80,6 @@ public class Post {
     @CollectionTable(name = "post_tags", joinColumns = @JoinColumn(name = "post_id"))
     @Column(name = "tag")
     @Builder.Default
-    private List<String> tags = new ArrayList<>();
+    private Set<String> tags = new HashSet<>();
 
 }

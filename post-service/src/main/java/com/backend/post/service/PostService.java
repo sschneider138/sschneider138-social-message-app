@@ -8,18 +8,23 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import com.backend.post.dto.PageDto;
+import com.backend.post.dto.PostContentUpdateDto;
 import com.backend.post.dto.PostCreationDto;
+import com.backend.post.dto.PostLikeDto;
 import com.backend.post.dto.PostResponseDto;
-import com.backend.post.dto.PostUpdateDto;
 import com.backend.post.model.Post;
 import com.backend.post.repository.PostRepository;
 
 import lombok.RequiredArgsConstructor;
 
+// TODO: check user's uuid with user-service db to make sure user's are authenticated before liking, modifying, or creating post
 @Service
 @RequiredArgsConstructor
 public class PostService {
     private final PostRepository postRepository;
+    private final String postNotFoundError = "post not found for uuid: ";
+    private final String postNotUpdatedError = "post could not be updated for uuid: ";
+    private final String unauthorizedAccessError = "unauthorized: you are not the author of this post";
 
     public List<PostResponseDto> getAllPosts() {
         return postRepository.findAll().stream()
@@ -41,6 +46,7 @@ public class PostService {
                 dtoPage.getSize());
     }
 
+    // TODO: require authentication
     public PostResponseDto createPost(PostCreationDto postCreationDto) {
         Post post = Post.builder()
                 .authorUUID(postCreationDto.authorUUID())
@@ -52,25 +58,49 @@ public class PostService {
         return mapPostToDto(savedPost);
     }
 
-    public PostResponseDto updatePost(String postUUID, PostUpdateDto postUpdateDto) {
-        Post post = postRepository.findByPostUUID(postUUID).orElseThrow(() -> new RuntimeException("post not found"));
+    // TODO: require authentication and authorization
+    public PostResponseDto updatePostContent(String postUUID,
+            PostContentUpdateDto postContentUpdateDto) {
+        Post post = postRepository.findByPostUUID(postUUID)
+                .orElseThrow(() -> new RuntimeException(postNotFoundError + " " + postUUID));
+
+        if (!post.getAuthorUUID().equals(postContentUpdateDto.userUUID())) {
+            throw new RuntimeException(unauthorizedAccessError);
+        }
 
         try {
-            if (postUpdateDto.postContent() != null) {
-                post.setPostContent(postUpdateDto.postContent());
-            }
-
-            if (postUpdateDto.uuidsOfUsersWhoLikedThisPost() != null) {
-                post.setUuidsOfUsersWhoLikedThisPost(postUpdateDto.uuidsOfUsersWhoLikedThisPost());
-                post.setLikeCount(postUpdateDto.uuidsOfUsersWhoLikedThisPost().size());
+            if (postContentUpdateDto.postContent() != null) {
+                post.setPostContent(postContentUpdateDto.postContent());
             }
 
         } catch (RuntimeException e) {
-            throw new RuntimeException("failed to update post with uuid: " + postUUID);
+            throw new RuntimeException(postNotUpdatedError + " " + postUUID);
         }
 
         Post savedPost = postRepository.save(post);
         return mapPostToDto(savedPost);
+    }
+
+    public PostResponseDto likePost(String postUUID, PostLikeDto postLikeDto) {
+        Post post = postRepository.findByPostUUID(postUUID)
+                .orElseThrow(() -> new RuntimeException(postNotFoundError + " " + postUUID));
+
+        if (!post.getAuthorUUID().equals(postLikeDto.userUUID())) {
+            throw new RuntimeException(unauthorizedAccessError);
+        }
+
+        try {
+            if (!post.getUuidsOfUsersWhoLikedThisPost().contains(postLikeDto.userUUID())) {
+                post.getUuidsOfUsersWhoLikedThisPost().add(postLikeDto.userUUID());
+                post.setLikeCount(post.getLikeCount() + 1);
+            }
+
+        } catch (RuntimeException e) {
+            throw new RuntimeException(postNotFoundError + " " + postUUID);
+        }
+
+        Post updatedPost = postRepository.save(post);
+        return mapPostToDto(updatedPost);
     }
 
     private PostResponseDto mapPostToDto(Post post) {

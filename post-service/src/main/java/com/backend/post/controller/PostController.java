@@ -14,9 +14,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.backend.post.dto.PageDto;
 import com.backend.post.dto.PaginationRequestDto;
+import com.backend.post.dto.PostContentUpdateDto;
 import com.backend.post.dto.PostCreationDto;
 import com.backend.post.dto.PostResponseDto;
-import com.backend.post.dto.PostUpdateDto;
 import com.backend.post.service.PostService;
 
 import jakarta.validation.Valid;
@@ -52,7 +52,8 @@ public class PostController {
 
     @PatchMapping("/update/{postUUID}")
     @ResponseStatus(HttpStatus.ACCEPTED)
-    public PostResponseDto updatePost(@RequestParam String postUUID, @RequestBody PostUpdateDto postUpdateDto) {
-        return postService.updatePost(postUUID, postUpdateDto);
+    public PostResponseDto updatePostContent(@RequestParam String postUUID,
+            @RequestBody PostContentUpdateDto postContentUpdateDto) {
+        return postService.updatePostContent(postUUID, postContentUpdateDto);
     }
 }
