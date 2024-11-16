@@ -5,19 +5,21 @@ import java.util.Set;
 
 public record PostResponseDto(
 
-        String postUUID,
+    String postUUID,
 
-        String authorUUID,
+    String authorUUID,
 
-        Set<String> uuidsOfUsersWhoLikedThisPost,
+    String authorUsername,
 
-        String postContent,
+    Set<String> uuidsOfUsersWhoLikedThisPost,
 
-        Instant datePosted,
+    String postContent,
 
-        Integer shareCount,
+    Instant datePosted,
 
-        Integer likeCount,
+    Integer shareCount,
 
-        Set<String> tags) {
+    Integer likeCount,
+
+    Set<String> tags) {
 }

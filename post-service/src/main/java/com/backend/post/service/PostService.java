@@ -53,6 +53,7 @@ public class PostService {
 
     Post post = Post.builder()
         .authorUUID(user.userUUID())
+        .authorUsername(user.username())
         .postContent(postCreationDto.postContent())
         .tags(postCreationDto.tags())
         .build();
@@ -137,6 +138,7 @@ public class PostService {
     return new PostResponseDto(
         post.getPostUUID(),
         post.getAuthorUUID(),
+        post.getAuthorUsername(),
         post.getUuidsOfUsersWhoLikedThisPost(),
         post.getPostContent(),
         post.getDatePosted(),
