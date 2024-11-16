@@ -1,6 +1,23 @@
 package com.backend.post.model;
 
-import jakarta.persistence.*;
+import java.time.Instant;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.UUID;
+
+import org.hibernate.annotations.CreationTimestamp;
+
+import jakarta.persistence.CollectionTable;
+import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.SequenceGenerator;
+import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -8,16 +25,10 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.CreationTimestamp;
-
-import java.time.Instant;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.UUID;
 
 @Entity
 @Table(name = "t_posts", schema = "public", uniqueConstraints = {
-    @UniqueConstraint(columnNames = {"id", "postUUID"})
+    @UniqueConstraint(columnNames = { "id", "postUUID" })
 })
 @Data
 @Builder
@@ -45,12 +56,6 @@ public class Post {
   @NotNull(message = "author username is required")
   private String authorUsername;
 
-  @ElementCollection
-  @CollectionTable(name = "uuid_of_users_who_liked_this_post", joinColumns = @JoinColumn(name = "post_id"))
-  @Column(name = "user_id")
-  @Builder.Default
-  private Set<String> uuidsOfUsersWhoLikedThisPost = new HashSet<>();
-
   @Column(name = "post_content", nullable = false, updatable = false)
   @NotBlank(message = "your post cannot be blank")
   @Size(max = 280)
@@ -64,10 +69,6 @@ public class Post {
   @Column(name = "share_count")
   @Builder.Default
   private Integer shareCount = 0;
-
-  @Column(name = "post_like_count", nullable = false)
-  @Builder.Default
-  private Integer likeCount = 0;
 
   @ElementCollection
   @CollectionTable(name = "post_tags", joinColumns = @JoinColumn(name = "post_id"))

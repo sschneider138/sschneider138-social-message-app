@@ -11,15 +11,11 @@ public record PostResponseDto(
 
     String authorUsername,
 
-    Set<String> uuidsOfUsersWhoLikedThisPost,
-
     String postContent,
 
     Instant datePosted,
 
     Integer shareCount,
-
-    Integer likeCount,
 
     Set<String> tags) {
 }

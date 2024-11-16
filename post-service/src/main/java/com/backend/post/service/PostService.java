@@ -2,7 +2,10 @@ package com.backend.post.service;
 
 import com.backend.post.client.UserClient;
 import com.backend.post.client.UserResponseDto;
-import com.backend.post.dto.*;
+import com.backend.post.dto.PageDto;
+import com.backend.post.dto.PostContentUpdateDto;
+import com.backend.post.dto.PostCreationDto;
+import com.backend.post.dto.PostResponseDto;
 import com.backend.post.model.Post;
 import com.backend.post.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
@@ -29,6 +32,7 @@ public class PostService {
         .collect(Collectors.toList());
   }
 
+
   public PageDto<PostResponseDto> getAllPaginatedPosts(int pageIndex, int itemsPerPage) {
     PageRequest pageRequest = PageRequest.of(pageIndex, itemsPerPage);
     Page<Post> page = postRepository.findAll(pageRequest);
@@ -42,6 +46,7 @@ public class PostService {
         dtoPage.getNumber(),
         dtoPage.getSize());
   }
+
 
   // requires authentication and authorization
   public PostResponseDto createPost(PostCreationDto postCreationDto, String authorizationHeader) {
@@ -89,36 +94,6 @@ public class PostService {
   }
 
 
-  public PostResponseDto likePost(String postUUID, PostLikeDto postLikeDto, String authorizationHeader) {
-
-    UserResponseDto user = validateAndGetUser(authorizationHeader);
-
-    if (user == null || user.userUUID() == null || user.username() == null) {
-      throw new RuntimeException(invalidUserInfo);
-    }
-
-    Post post = postRepository.findByPostUUID(postUUID)
-        .orElseThrow(() -> new RuntimeException(postNotFoundError + postUUID));
-
-    if (!post.getAuthorUUID().equals(postLikeDto.userUUID())) {
-      throw new RuntimeException(unauthorizedAccessError);
-    }
-
-    try {
-      if (!post.getUuidsOfUsersWhoLikedThisPost().contains(postLikeDto.userUUID())) {
-        post.getUuidsOfUsersWhoLikedThisPost().add(postLikeDto.userUUID());
-        post.setLikeCount(post.getLikeCount() + 1);
-      }
-
-    } catch (RuntimeException e) {
-      throw new RuntimeException(postNotFoundError + postUUID);
-    }
-
-    Post updatedPost = postRepository.save(post);
-    return mapPostToDto(updatedPost);
-  }
-
-
   private UserResponseDto validateAndGetUser(String authorizationHeader) {
     if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
       throw new RuntimeException(unauthorizedAccessError);
@@ -139,11 +114,9 @@ public class PostService {
         post.getPostUUID(),
         post.getAuthorUUID(),
         post.getAuthorUsername(),
-        post.getUuidsOfUsersWhoLikedThisPost(),
         post.getPostContent(),
         post.getDatePosted(),
         post.getShareCount(),
-        post.getLikeCount(),
         post.getTags());
   }
 }
