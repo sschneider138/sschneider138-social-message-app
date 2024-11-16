@@ -22,7 +22,7 @@ public class Routes {
     @Bean
     public RouterFunction<ServerResponse> postServiceRoute() {
         return GatewayRouterFunctions.route("post_service")
-                .route(RequestPredicates.path("/api/post"), HandlerFunctions.http("http://localhost:8081"))
+                .route(RequestPredicates.path("/api/post/**"), HandlerFunctions.http("http://localhost:8081"))
                 .build();
     }
 }
