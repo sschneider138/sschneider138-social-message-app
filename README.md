@@ -21,14 +21,15 @@ This application is a messaging client that includes all the core functionalies 
 # Stack
 
 * Backend:
-  * Java Spring Boot microservices
-  * MySQL database with phpMyAdmin
-  * OpenFeign HTTP client for inter-container communication
+  * Java and Kotlin Spring Boot microservices
+  * MySQL database with phpMyAdmin for service databases
+  * RestClient HTTP client for inter-container communication
   * Eureka for service discovery
   * Resiliance4j as curcuit breaker/fault tolerance mechanism
 
 * Frontend:
   * NextJS with TypeScript
+  * DaisyUI component library
 
 * DevOps:
   * Docker for containerization
