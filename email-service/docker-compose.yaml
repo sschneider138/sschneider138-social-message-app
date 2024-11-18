@@ -1,0 +1,25 @@
+version: "4"
+
+services:
+  email-service-mysql:
+    image: mysql:8.3.0
+    container_name: email-service-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - "3309:3306"
+    volumes:
+      - ./mysql:/var/lib/mysql
+      - ./docker/mysql/init.sql:/docker-entrypoint-initdb.d/init.sql
+
+  email-service-phpmyadmin:
+    image: phpmyadmin:latest
+    container_name: email-service-phpmyadmin
+    environment:
+      PMA_HOST: email-service-mysql
+      PMA_USER: root
+      PMA_PASSWORD: root
+    ports:
+      - "5053:80"
+    depends_on:
+      - email-service-mysql

@@ -46,6 +46,15 @@ public class Routes {
   }
 
   @Bean
+  public RouterFunction<ServerResponse> emailServiceRoute() {
+    return GatewayRouterFunctions.route("email_service")
+        .route(RequestPredicates.path("/api/email/**"), HandlerFunctions.http("http://localhost:8082"))
+        .filter(CircuitBreakerFilterFunctions.circuitBreaker("emailServiceCircuitBreaker",
+            URI.create("forward:/fallbackRoute")))
+        .build();
+  }
+
+  @Bean
   public RouterFunction<ServerResponse> fallbackRoute() {
     return route("fallbackRoute")
         .GET("/fallbackRoute", request -> ServerResponse.status(HttpStatus.SERVICE_UNAVAILABLE)
