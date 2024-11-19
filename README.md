@@ -40,7 +40,7 @@ This application is a messaging client that includes all the core functionalies 
 
 # Installation
 
-**Before proceeding**, note that for email-service to work, you must enter your own credentials (email and app password) into the mail-service's application.properties. For instructions on how to configure an app password (note that this is **not** the same as your account's password), visit this [resource](https://support.google.com/mail/answer/185833?hl=en). Create a `.env` file in the `~./src` directory, copy over the fields defined in the `.env.example` in that same directory, then place your email address and app password in the appropriate fields.
+**Before proceeding**, note that for email-service to work, you must enter your own credentials (email and app password) into the mail-service's application.properties. For instructions on how to configure an app password (note that this is **not** the same as your account's password), visit this [resource](https://support.google.com/mail/answer/185833?hl=en). Create a `secrets.properties` file in the `~./src/main/resources` directory, copy over the fields defined in the `secrets.properties.example` in that same directory, then place your email address and app password in the appropriate fields.
 
 Installation is managed by a sinlge `bash` script. To deploy locally or remotely to a server (on premise or cloud), just run `start.sh`.
 

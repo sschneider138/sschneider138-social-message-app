@@ -32,9 +32,8 @@ build/
 ### VS Code ###
 .vscode/
 
-
 ### db ###
 mysql/
 
 ### secrets ###
-.env
+secrets.properties
