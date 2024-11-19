@@ -1,17 +1,17 @@
 package com.backend.email.service;
 
-import com.backend.email.dto.MailDto;
-import com.backend.email.model.Mail;
-import com.backend.email.repository.MailRepository;
-import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.util.Date;
+
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
+import com.backend.email.dto.MailDto;
+import com.backend.email.model.Mail;
+import com.backend.email.repository.MailRepository;
+
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
@@ -19,7 +19,6 @@ public class MailService {
 
   private final JavaMailSender mailSender;
   private final MailRepository mailRepository;
-  private static final Logger logger = LoggerFactory.getLogger(MailService.class);
 
   public void sendEmail(@Valid MailDto mailDto) {
     SimpleMailMessage message = new SimpleMailMessage();
@@ -40,8 +39,7 @@ public class MailService {
 
       mailSender.send(message);
     } catch (Exception e) {
-      throw new RuntimeException("error sending mail");
+      throw new RuntimeException("error sending mail: " + e.getMessage(), e);
     }
-
   }
 }
