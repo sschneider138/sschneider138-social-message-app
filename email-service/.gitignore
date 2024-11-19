@@ -37,4 +37,4 @@ build/
 mysql/
 
 ### secrets ###
-src/.env
+.env

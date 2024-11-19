@@ -1,12 +1,13 @@
 package com.backend.user.auth;
 
 import com.backend.user.config.JwtService;
+import com.backend.user.dto.MailDto;
 import com.backend.user.dto.UserAuthenticationDto;
 import com.backend.user.dto.UserCreationRequestDto;
 import com.backend.user.model.User;
 import com.backend.user.repository.UserRepository;
+import com.backend.user.service.MailService;
 import jakarta.transaction.Transactional;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -17,13 +18,18 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class AuthenticationService {
   private final UserRepository repository;
+  private final MailService mailService;
   private final PasswordEncoder passwordEncoder;
   private final JwtService jwtService;
   private final AuthenticationManager authenticationManager;
 
 
   @Transactional
-  public AuthenticationResponse register(@Valid UserCreationRequestDto userDto) {
+  public AuthenticationResponse register(UserCreationRequestDto userDto) {
+
+    if (!isPasswordValid(userDto.password())) {
+      throw new RuntimeException("password must be 8 characters and include at least one uppercase letter, one lowercase letter, one digit, and one special character");
+    }
 
     User user = User.builder()
         .firstName(userDto.firstName())
@@ -36,11 +42,19 @@ public class AuthenticationService {
         .build();
     repository.save(user);
 
+    MailDto mailDto = new MailDto(
+        userDto.email(),
+        "Welcome to Our Site!",
+        "Thank you for registering " + userDto.username() + ". We are so excited for the great things we will do together. As part of our community, you are part of a world changing movement."
+    );
+
+    mailService.sendAsyncEmail(mailDto);
+
     String jwtToken = jwtService.generateToken(user);
     return AuthenticationResponse.builder().token(jwtToken).build();
   }
 
-  public AuthenticationResponse authenticate(@Valid UserAuthenticationDto userAuthenticationDto) {
+  public AuthenticationResponse authenticate(UserAuthenticationDto userAuthenticationDto) {
     authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
         userAuthenticationDto.email(), userAuthenticationDto.password()));
 

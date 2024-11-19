@@ -125,11 +125,5 @@ public class UserService {
         user.getDateJoined(),
         user.getMembershipLength());
   }
-
-  private boolean isPasswordValid(String password) {
-    // password must be 8 characters and include at least one uppercase letter,
-    // one lowercase letter, one digit, and one special character
-    return password != null
-        && password.matches("^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=!])(?=\\S+$).{8,}$");
-  }
+  
 }

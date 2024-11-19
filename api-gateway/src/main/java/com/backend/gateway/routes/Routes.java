@@ -48,7 +48,7 @@ public class Routes {
   @Bean
   public RouterFunction<ServerResponse> emailServiceRoute() {
     return GatewayRouterFunctions.route("email_service")
-        .route(RequestPredicates.path("/api/email/**"), HandlerFunctions.http("http://localhost:8082"))
+        .route(RequestPredicates.path("/api/mail/**"), HandlerFunctions.http("http://localhost:8083"))
         .filter(CircuitBreakerFilterFunctions.circuitBreaker("emailServiceCircuitBreaker",
             URI.create("forward:/fallbackRoute")))
         .build();

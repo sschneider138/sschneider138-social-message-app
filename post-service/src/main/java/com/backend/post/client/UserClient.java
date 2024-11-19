@@ -17,6 +17,6 @@ public interface UserClient {
   UserResponseDto validateUser(@RequestHeader("Authorization") String jwt);
 
   default void fallbackMethod(String jwt, Throwable throwable) {
-    log.error("cannot validate user with token {}, failure reason {}", jwt, throwable.getMessage());
+    log.error("cannot validate user with token: {}, failure reason: {}", jwt, throwable.getMessage());
   }
 }

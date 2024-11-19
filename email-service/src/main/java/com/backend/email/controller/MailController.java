@@ -4,11 +4,10 @@ import com.backend.email.dto.MailDto;
 import com.backend.email.service.MailService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.HashMap;
 
 @RestController
 @RequestMapping("/api/mail")
@@ -16,10 +15,14 @@ import org.springframework.web.bind.annotation.RestController;
 public class MailController {
 
   private final MailService mailService;
-  
+
   @PostMapping("/send")
-  public ResponseEntity<String> sendEmail(@Valid @RequestBody MailDto mailDto) {
+  @ResponseStatus(HttpStatus.OK)
+  public HashMap<String, String> sendEmail(@Valid @RequestBody MailDto mailDto) {
+    HashMap<String, String> body = new HashMap<>();
+    
     mailService.sendEmail(mailDto);
-    return ResponseEntity.ok("email sent successfully");
+    body.put("status", "email sent successfully");
+    return body;
   }
 }
