@@ -1,17 +1,15 @@
 package com.backend.email.service;
 
-import java.util.Date;
-
+import com.backend.email.dto.MailDto;
+import com.backend.email.model.Mail;
+import com.backend.email.repository.MailRepository;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
-import com.backend.email.dto.MailDto;
-import com.backend.email.model.Mail;
-import com.backend.email.repository.MailRepository;
-
-import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
+import java.util.Date;
 
 @Service
 @RequiredArgsConstructor
@@ -32,6 +30,7 @@ public class MailService {
 
       mailRepository.save(mail);
 
+      message.setFrom("social-messaging-app@email.com");
       message.setTo(mail.getRecipient());
       message.setSubject(mail.getSubject());
       message.setText(mail.getBody());

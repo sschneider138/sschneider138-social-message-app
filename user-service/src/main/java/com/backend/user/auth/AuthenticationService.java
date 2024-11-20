@@ -44,10 +44,20 @@ public class AuthenticationService {
         .build();
     userRepository.save(user);
 
+    String body = String.format("""
+        Thank you for registering %s!
+        
+        We are so excited for the great things we will do together. As part of our community, you are part of a world changing movement.
+        
+        Best regards,
+        Social Messaging App
+        
+        """, userDto.username());
+
     MailDto mailDto = new MailDto(
         userDto.email(),
         "Welcome to Our Site!",
-        "Thank you for registering " + userDto.username() + ". We are so excited for the great things we will do together. As part of our community, you are part of a world changing movement."
+        body
     );
 
     mailService.sendAsyncEmail(mailDto);
