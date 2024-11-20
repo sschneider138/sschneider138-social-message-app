@@ -34,3 +34,6 @@ build/
 
 ### database ###
 mysql/
+
+### secrets ###
+secrets.properties
