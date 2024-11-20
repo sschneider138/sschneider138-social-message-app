@@ -1,4 +1,3 @@
-version: "4"
 
 services:
   like-service-mysql:

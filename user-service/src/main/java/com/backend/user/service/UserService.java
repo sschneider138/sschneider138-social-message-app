@@ -10,7 +10,6 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -20,7 +19,6 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class UserService {
   private final UserRepository userRepository;
-  private final PasswordEncoder passwordEncoder;
   private final JwtService jwtService;
 
   public List<UserResponseDto> getAllUsers() {
@@ -125,5 +123,5 @@ public class UserService {
         user.getDateJoined(),
         user.getMembershipLength());
   }
-  
+
 }
