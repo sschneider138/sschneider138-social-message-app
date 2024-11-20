@@ -17,5 +17,7 @@ public record PostResponseDto(
 
     Integer shareCount,
 
+    Integer likeCount,
+
     Set<String> tags) {
 }

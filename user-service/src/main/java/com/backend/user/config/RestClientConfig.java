@@ -1,6 +1,6 @@
 package com.backend.user.config;
 
-import com.backend.user.client.MailClient;
+import com.backend.user.external.client.MailClient;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.ClientHttpRequestFactories;
 import org.springframework.boot.web.client.ClientHttpRequestFactorySettings;

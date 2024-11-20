@@ -1,7 +1,7 @@
 package com.backend.user.service;
 
-import com.backend.user.client.MailClient;
-import com.backend.user.dto.MailDto;
+import com.backend.user.external.client.MailClient;
+import com.backend.user.external.dto.MailDto;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Async;

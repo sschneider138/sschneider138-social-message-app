@@ -24,7 +24,6 @@ This application is a messaging client that includes all the core functionalies 
   * Java and Kotlin Spring Boot microservices
   * MySQL database with phpMyAdmin for service databases
   * RestClient HTTP client for inter-container communication
-  * Eureka for service discovery
   * Resiliance4j as curcuit breaker/fault tolerance mechanism
 
 * Frontend:
@@ -33,7 +32,7 @@ This application is a messaging client that includes all the core functionalies 
 
 * DevOps:
   * Docker for containerization
-  * Kubernetes for container orchestration
+  * Kubernetes for container orchestration and service discovery
 
 * Documentation:
   * Swagger

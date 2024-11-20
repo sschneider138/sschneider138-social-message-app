@@ -1,5 +1,6 @@
-package com.backend.post.client;
+package com.backend.post.external.client;
 
+import com.backend.post.external.dto.UserResponseDto;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import io.github.resilience4j.retry.annotation.Retry;
 import org.slf4j.Logger;

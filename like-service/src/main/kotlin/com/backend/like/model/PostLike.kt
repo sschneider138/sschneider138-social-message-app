@@ -4,7 +4,10 @@ import jakarta.persistence.*
 import java.time.Instant
 
 @Entity
-@Table(name = "post_likes")
+@Table(
+    name = "post_likes",
+    uniqueConstraints = [UniqueConstraint(columnNames = ["post_uuid", "user_uuid"])]
+)
 class PostLike(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -16,8 +19,7 @@ class PostLike(
     @Column(name = "user_uuid", nullable = false)
     val userUUID: String,
 
-
     @Column(name = "liked_at_timestamp", nullable = false, updatable = false)
     val likedAt: Instant = Instant.now(),
 
-)
+    )

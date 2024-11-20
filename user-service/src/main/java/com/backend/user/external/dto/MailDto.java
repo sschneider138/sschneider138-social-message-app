@@ -1,4 +1,4 @@
-package com.backend.user.dto;
+package com.backend.user.external.dto;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;

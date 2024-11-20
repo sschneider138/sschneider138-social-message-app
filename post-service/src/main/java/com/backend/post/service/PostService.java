@@ -1,11 +1,13 @@
 package com.backend.post.service;
 
-import com.backend.post.client.UserClient;
-import com.backend.post.client.UserResponseDto;
 import com.backend.post.dto.PageDto;
 import com.backend.post.dto.PostContentUpdateDto;
 import com.backend.post.dto.PostCreationDto;
 import com.backend.post.dto.PostResponseDto;
+import com.backend.post.external.client.LikeClient;
+import com.backend.post.external.client.UserClient;
+import com.backend.post.external.dto.LikeDto;
+import com.backend.post.external.dto.UserResponseDto;
 import com.backend.post.model.Post;
 import com.backend.post.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +23,7 @@ import java.util.stream.Collectors;
 public class PostService {
   private final PostRepository postRepository;
   private final UserClient userClient;
+  private final LikeClient likeClient;
 
   private final String invalidUserInfo = "invalid user information: user could not be validated ";
   private final String postNotFoundError = "post not found for uuid: ";
@@ -93,6 +96,28 @@ public class PostService {
     return mapPostToDto(savedPost);
   }
 
+  public PostResponseDto likePost(String postUUID, String authorizationHeader) {
+    // get userUUID from user-service to build LikeDto necessary to like post
+    UserResponseDto userResponseDto = validateAndGetUser(authorizationHeader);
+    String userUUID = userResponseDto.userUUID();
+
+    LikeDto likeDto = new LikeDto(postUUID, userUUID);
+    Post post = postRepository.findByPostUUID(likeDto.postUUID()).orElseThrow(() -> new RuntimeException(postNotFoundError + likeDto.postUUID()));
+
+    String likeStatus = likeClient.toggleLike(likeDto);
+
+    if (likeStatus.strip().equalsIgnoreCase("like")) {
+      post.setLikeCount(post.getLikeCount() + 1);
+    } else if (likeStatus.strip().equalsIgnoreCase("dislike")) {
+      post.setLikeCount(post.getLikeCount() - 1);
+    } else {
+      throw new RuntimeException("an unexpected error has occurred");
+    }
+
+    postRepository.save(post);
+    return mapPostToDto(post);
+  }
+
 
   private UserResponseDto validateAndGetUser(String authorizationHeader) {
     if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
@@ -117,6 +142,7 @@ public class PostService {
         post.getPostContent(),
         post.getDatePosted(),
         post.getShareCount(),
+        post.getLikeCount(),
         post.getTags());
   }
 }

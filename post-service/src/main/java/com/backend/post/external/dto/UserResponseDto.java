@@ -1,4 +1,4 @@
-package com.backend.post.client;
+package com.backend.post.external.dto;
 
 import java.time.Instant;
 import java.util.List;

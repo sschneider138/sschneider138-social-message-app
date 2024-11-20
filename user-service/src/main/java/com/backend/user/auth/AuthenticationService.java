@@ -1,9 +1,10 @@
 package com.backend.user.auth;
 
 import com.backend.user.config.JwtService;
-import com.backend.user.dto.MailDto;
 import com.backend.user.dto.UserAuthenticationDto;
 import com.backend.user.dto.UserCreationRequestDto;
+import com.backend.user.dto.UserResponseDto;
+import com.backend.user.external.dto.MailDto;
 import com.backend.user.model.User;
 import com.backend.user.repository.UserRepository;
 import com.backend.user.service.MailService;
@@ -13,11 +14,12 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestHeader;
 
 @Service
 @RequiredArgsConstructor
 public class AuthenticationService {
-  private final UserRepository repository;
+  private final UserRepository userRepository;
   private final MailService mailService;
   private final PasswordEncoder passwordEncoder;
   private final JwtService jwtService;
@@ -40,7 +42,7 @@ public class AuthenticationService {
         .password(passwordEncoder.encode(userDto.password()))
         .topInterests(userDto.topInterests())
         .build();
-    repository.save(user);
+    userRepository.save(user);
 
     MailDto mailDto = new MailDto(
         userDto.email(),
@@ -58,9 +60,33 @@ public class AuthenticationService {
     authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
         userAuthenticationDto.email(), userAuthenticationDto.password()));
 
-    User user = repository.findByEmail(userAuthenticationDto.email()).orElseThrow();
+    User user = userRepository.findByEmail(userAuthenticationDto.email()).orElseThrow();
     String jwtToken = jwtService.generateToken(user);
     return AuthenticationResponse.builder().token(jwtToken).build();
+  }
+
+
+  public UserResponseDto validateAndGetUser(@RequestHeader("Authorization") String token) {
+    String jwt = extractJWT(token);
+
+    String username = jwtService.extractUsername(jwt);
+
+    User user = userRepository.findByUsername(username).orElseThrow(() -> new RuntimeException("invalid user"));
+
+    if (jwtService.isTokenExpired(jwt)) {
+      throw new RuntimeException("token expired");
+    }
+
+    return new UserResponseDto(
+        user.getUserUUID(),
+        user.getUsername(),
+        user.getLastName(),
+        user.getUsername(),
+        user.getEmail(),
+        user.getPhoneNumber(),
+        user.getTopInterests(),
+        user.getDateJoined(),
+        user.getMembershipLength());
   }
 
   private boolean isPasswordValid(String password) {
@@ -68,6 +94,10 @@ public class AuthenticationService {
     // one lowercase letter, one digit, and one special character
     return password != null
         && password.matches("^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=!])(?=\\S+$).{8,}$");
+  }
+
+  private String extractJWT(String token) {
+    return token.startsWith("Bearer ") ? token.substring(7) : token;
   }
 
 }

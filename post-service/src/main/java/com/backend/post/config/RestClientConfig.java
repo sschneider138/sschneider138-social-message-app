@@ -1,6 +1,7 @@
 package com.backend.post.config;
 
-import com.backend.post.client.UserClient;
+import com.backend.post.external.client.LikeClient;
+import com.backend.post.external.client.UserClient;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.ClientHttpRequestFactories;
 import org.springframework.boot.web.client.ClientHttpRequestFactorySettings;
@@ -19,6 +20,9 @@ public class RestClientConfig {
   @Value("${user.url}")
   private String userServiceUrl;
 
+  @Value("${like.url}")
+  private String likeServiceUrl;
+
   @Bean
   public UserClient userClient() {
     RestClient restClient = RestClient.builder()
@@ -29,6 +33,19 @@ public class RestClientConfig {
     var restClientAdapter = RestClientAdapter.create(restClient);
     var httpServiceProxyFactory = HttpServiceProxyFactory.builderFor(restClientAdapter).build();
     return httpServiceProxyFactory.createClient(UserClient.class);
+  }
+
+
+  @Bean
+  public LikeClient likeClient() {
+    RestClient restClient = RestClient.builder()
+        .baseUrl(likeServiceUrl)
+        .requestFactory(getClientRequestFactory())
+        .build();
+
+    var restClientAdapter = RestClientAdapter.create(restClient);
+    var httpServiceProxyFactory = HttpServiceProxyFactory.builderFor(restClientAdapter).build();
+    return httpServiceProxyFactory.createClient(LikeClient.class);
   }
 
 

@@ -43,10 +43,19 @@ public class PostController {
   @PatchMapping("/update/{postUUID}")
   @ResponseStatus(HttpStatus.ACCEPTED)
   public PostResponseDto updatePostContent(
-      @RequestParam String postUUID,
+      @PathVariable String postUUID,
       @RequestBody PostContentUpdateDto postContentUpdateDto,
       @RequestHeader("Authorization") String authorizationHeader
   ) {
     return postService.updatePostContent(postUUID, postContentUpdateDto, authorizationHeader);
+  }
+
+  @PostMapping("/like/{postUUID}")
+  @ResponseStatus(HttpStatus.OK)
+  public PostResponseDto likePost(
+      @PathVariable String postUUID,
+      @RequestHeader("Authorization") String authorizationHeader
+  ) {
+    return postService.likePost(postUUID, authorizationHeader);
   }
 }
