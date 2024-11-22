@@ -16,7 +16,7 @@ public class HealthCheckController {
   @GetMapping("/check")
   @ResponseStatus(HttpStatus.OK)
   public Map<String, String> healthCheck() {
-    HashMap<String, String> status = new HashMap<>();
+    Map<String, String> status = new HashMap<>();
     status.put("status", "ok");
     return status;
 
