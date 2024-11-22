@@ -55,6 +55,15 @@ public class Routes {
   }
 
   @Bean
+  public RouterFunction<ServerResponse> newsServiceRoute() {
+    return GatewayRouterFunctions.route("news_service")
+        .route(RequestPredicates.path("/api/news/**"), HandlerFunctions.http("http://localhost:8085"))
+        .filter(CircuitBreakerFilterFunctions.circuitBreaker("newsServiceCircuitBreaker",
+            URI.create("forward:/fallbackRoute")))
+        .build();
+  }
+
+  @Bean
   public RouterFunction<ServerResponse> fallbackRoute() {
     return route("fallbackRoute")
         .GET("/fallbackRoute", request -> ServerResponse.status(HttpStatus.SERVICE_UNAVAILABLE)
