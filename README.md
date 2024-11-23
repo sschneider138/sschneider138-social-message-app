@@ -22,9 +22,14 @@ This application is a messaging client that includes all the core functionalies 
 
 * Backend:
   * Java and Kotlin Spring Boot microservices
+  * Python FastAPI microservices
   * MySQL database with phpMyAdmin for service databases
-  * RestClient HTTP client for inter-container communication
+  * RestClient HTTP client for inter-service communication
   * Resiliance4j as curcuit breaker/fault tolerance mechanism
+  * Loki for aggregation and log management
+  * Prometheus for metrics collection and monitoring
+  * Tempo for distributed tracing
+  * Grafana for data visualization via dashboard
 
 * Frontend:
   * NextJS with TypeScript

@@ -1,6 +1,7 @@
 from typing import List
 
 from fastapi import APIRouter, HTTPException, Query
+
 from models.NewsReport import NewsReport
 from services.NewsService import NewsService
 

@@ -34,3 +34,6 @@ build/
 
 ### database ###
 volume-data/
+
+### mounted data ###
+tempo-data
