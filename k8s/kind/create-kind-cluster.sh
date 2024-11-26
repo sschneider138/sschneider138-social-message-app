@@ -1,0 +1,1 @@
+kind create cluster --name messaging-app --config kind-config.yaml
