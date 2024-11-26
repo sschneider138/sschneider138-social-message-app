@@ -32,8 +32,5 @@ build/
 ### VS Code ###
 .vscode/
 
-### database ###
-volume-data/
-
 ### mounted data ###
 tempo-data

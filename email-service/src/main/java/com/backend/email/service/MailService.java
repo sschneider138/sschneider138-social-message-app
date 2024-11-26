@@ -1,15 +1,17 @@
 package com.backend.email.service;
 
-import com.backend.email.dto.MailDto;
-import com.backend.email.model.Mail;
-import com.backend.email.repository.MailRepository;
-import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
+import java.util.Date;
+
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
+import com.backend.email.dto.MailDto;
+import com.backend.email.model.Mail;
+import com.backend.email.repository.MailRepository;
+
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
@@ -22,23 +24,23 @@ public class MailService {
     SimpleMailMessage message = new SimpleMailMessage();
 
     try {
-      Mail mail = Mail.builder()
+      Mail email = Mail.builder()
           .recipient(mailDto.recipient())
           .subject(mailDto.subject())
           .body(mailDto.body())
           .build();
 
-      mailRepository.save(mail);
+      mailRepository.save(email);
 
       message.setFrom("social-messaging-app@email.com");
-      message.setTo(mail.getRecipient());
-      message.setSubject(mail.getSubject());
-      message.setText(mail.getBody());
-      message.setSentDate(Date.from(mail.getDateSent()));
+      message.setTo(email.getRecipient());
+      message.setSubject(email.getSubject());
+      message.setText(email.getBody());
+      message.setSentDate(Date.from(email.getDateSent()));
 
       mailSender.send(message);
     } catch (Exception e) {
-      throw new RuntimeException("error sending mail: " + e.getMessage(), e);
+      throw new RuntimeException("error sending email: " + e.getMessage(), e);
     }
   }
 }

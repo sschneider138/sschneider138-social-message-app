@@ -14,13 +14,12 @@ public interface MailClient {
 
   Logger log = LoggerFactory.getLogger(MailClient.class);
 
-  @PostExchange("/api/mail/send")
-  @CircuitBreaker(name = "mail", fallbackMethod = "fallbackMethod")
-  @Retry(name = "mail")
+  @PostExchange("/api/email/send")
+  @CircuitBreaker(name = "email", fallbackMethod = "fallbackMethod")
+  @Retry(name = "email")
   void sendEmail(@Valid @RequestBody MailDto mailDto);
 
   default void fallbackMethod(@Valid @RequestBody MailDto mailDto, Throwable throwable) {
-    log.error("cannot send mail to address: {}\nfailure reason: {}\n", mailDto.recipient(), throwable.getMessage());
+    log.error("cannot send email to address: {}\nfailure reason: {}\n", mailDto.recipient(), throwable.getMessage());
   }
 }
- 

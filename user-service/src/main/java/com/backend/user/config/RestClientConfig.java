@@ -15,7 +15,7 @@ import java.time.Duration;
 
 @Configuration
 public class RestClientConfig {
-  @Value("${mail.url}")
+  @Value("${email.service.url}")
   private String mailServiceUrl;
 
   @Bean

@@ -26,4 +26,4 @@ app.include_router(healthCheckController.router, prefix="/health")
 
 
 if __name__ == "__main__":
-    uvicorn.run(app="server:app", host="0.0.0.0", port=8085, reload=True)
+    uvicorn.run(app="server:app", host="0.0.0.0", port=8084, reload=True)

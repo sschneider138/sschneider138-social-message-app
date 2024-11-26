@@ -17,10 +17,10 @@ import java.time.Duration;
 @Configuration
 public class RestClientConfig {
 
-  @Value("${user.url}")
+  @Value("${user.service.url}")
   private String userServiceUrl;
 
-  @Value("${like.url}")
+  @Value("${like.service.url}")
   private String likeServiceUrl;
 
   @Bean

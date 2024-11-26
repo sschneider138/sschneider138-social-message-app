@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.HashMap;
 
 @RestController
-@RequestMapping("/api/mail")
+@RequestMapping("/api/email")
 @RequiredArgsConstructor
 public class MailController {
 
@@ -20,7 +20,7 @@ public class MailController {
   @ResponseStatus(HttpStatus.OK)
   public HashMap<String, String> sendEmail(@Valid @RequestBody MailDto mailDto) {
     HashMap<String, String> body = new HashMap<>();
-    
+
     mailService.sendEmail(mailDto);
     body.put("status", "email sent successfully");
     return body;
